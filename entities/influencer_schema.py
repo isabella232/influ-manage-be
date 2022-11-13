@@ -2,7 +2,7 @@ from typing import Union
 
 from pydantic import BaseModel
 
-class Influencer(BaseModel):
+class InfluencerSchema(BaseModel):
     id: int
     name: str
     note: str

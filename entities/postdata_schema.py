@@ -2,7 +2,7 @@ from typing import Union
 
 from pydantic import BaseModel
 
-class PostData(BaseModel):
+class PostDataSchema(BaseModel):
     id: int
     date_refreshed: str
     num_views: int
@@ -11,3 +11,5 @@ class PostData(BaseModel):
     num_dislikes: int
     num_comments: int
     post_id: int
+
+

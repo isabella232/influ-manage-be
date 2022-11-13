@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from entities.postdata_model import PostData
 
 
-class Post(BaseModel):
+class PostSchema(BaseModel):
     id: int
     url: str
     generated_redirect: str

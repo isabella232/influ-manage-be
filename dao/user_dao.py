@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from entities.user_model import User
-from entities.user_schema import UserCreate
+from entities.user_schema import UserCreateSchema
 class UserDao:
     def get_user(self, db: Session, user_id: int):
         return db.query(User).filter(User.id == user_id).first()
@@ -15,10 +15,10 @@ class UserDao:
         return db.query(User).offset(skip).limit(limit).all()
 
 
-    def create_user(self, db: Session, user: UserCreate):
-        fake_hashed_password = user.password + "notreallyhashed"
+    def create_user(self, db: Session, user_schema: UserCreateSchema):
+        fake_hashed_password = user_schema.password + "notreallyhashed"
         db_user = User(
-            email=user.email, hashed_password=fake_hashed_password)
+            email=user_schema.email, hashed_password=fake_hashed_password)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
