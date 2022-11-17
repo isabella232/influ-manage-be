@@ -11,7 +11,7 @@ from database import SessionLocal, engine, Base
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
+# TODO: create router instead of this mess
 
 # Dependency
 def get_db():
@@ -20,26 +20,35 @@ def get_db():
         yield db
     finally:
         db.close()
-
+#******************************
+#******************************
+#******************************
+#******************************
+#******************************
+# ------------USER-------------
+#******************************
+#******************************
+#******************************
+#******************************
 
 @app.post("/users/", response_model=UserSchema)
-def create_user(user: UserCreateSchema, db: Session = Depends(get_db)):
+def create_user(user_schema: UserCreateSchema, db: Session = Depends(get_db)):
     user_dao = UserDao()
-    db_user = user_dao.get_user_by_email(db, email=user.email)
+    db_user = user_dao.get_user_by_email(db, email=user_schema.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return user_dao.create_user(db=db, user=user)
+    return user_dao.create_user(db=db, user_schema=user_schema)
 
 
 @app.get("/users/", response_model=list[UserSchema])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     user_dao = UserDao()
     users = user_dao.get_users(db, skip=skip, limit=limit)
     return users
 
 
 @app.get("/users/{user_id}", response_model=UserSchema)
-def read_user(user_id: int, db: Session = Depends(get_db)):
+def get_user(user_id: int, db: Session = Depends(get_db)):
     user_dao = UserDao()
     db_user = user_dao.get_user(db, user_id=user_id)
     if db_user is None:
@@ -47,8 +56,18 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-#TODO: resolve response_model ???
-@app.post("/campaign/{user_id}")
+#******************************
+#******************************
+#******************************
+#******************************
+#******************************
+# ----------CAMPAIGN-----------
+#******************************
+#******************************
+#******************************
+#******************************
+
+@app.post("/campaigns/{user_id}", response_model=CampaignSchema)
 def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends(get_db)):
     date_to = datetime.now()
     date_from = datetime.now()
@@ -58,5 +77,15 @@ def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends
     db.add(campaign)
     db.commit()
     db.refresh(campaign)
-
     return campaign
+
+@app.get("/campaigns/{user_id}", response_model=list[CampaignSchema])
+def get_campaigns(user_id: int, db: Session = Depends(get_db)):
+    res = db.query(Campaign).filter(Campaign.user_id == user_id).all()
+    return res
+
+
+
+import uvicorn
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
