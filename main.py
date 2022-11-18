@@ -3,9 +3,9 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from dao.user_dao import UserDao
-from entities.user_schema import UserCreateSchema, UserSchema
-from entities.campaign_schema import CampaignSchema, CampaignCreateSchema
-from entities.campaign_model import Campaign
+from schemas.user_schema import UserCreateSchema, UserSchema
+from schemas.campaign_schema import CampaignSchema, CampaignCreateSchema
+from models import Campaign
 from datetime import datetime
 from database import SessionLocal, engine, Base
 Base.metadata.create_all(bind=engine)
@@ -20,6 +20,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
 #******************************
 #******************************
 #******************************
@@ -83,6 +85,22 @@ def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends
 def get_campaigns(user_id: int, db: Session = Depends(get_db)):
     res = db.query(Campaign).filter(Campaign.user_id == user_id).all()
     return res
+
+@app.get("/campaigns/{campaign_id}", response_model=CampaignSchema)
+def get_campaign(campaign_id: int, db: Session = Depends(get_db)):
+    res = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    return res
+
+
+@app.delete("/campaigns/{campaign_id}")
+def remove_campaign(campaign_id: int, db: Session = Depends(get_db)):
+    db.query(Campaign).filter(Campaign.id == campaign_id).delete()
+    db.commit()
+    return True
+
+#TODO: Add/remove influencers from campaign
+#TODO: Influencers endpoints
+#TODO: Post endpoints
 
 
 

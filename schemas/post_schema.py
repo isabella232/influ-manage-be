@@ -1,7 +1,7 @@
 from typing import Union
 
 from pydantic import BaseModel
-from entities.postdata_model import PostData
+from schemas.postdata_model import PostData
 
 
 class PostSchema(BaseModel):

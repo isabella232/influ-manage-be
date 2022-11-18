@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from entities.user_model import User
-from entities.user_schema import UserCreateSchema
+from models import User
+from schemas.user_schema import UserCreateSchema
 class UserDao:
     def get_user(self, db: Session, user_id: int):
         return db.query(User).filter(User.id == user_id).first()
