@@ -23,11 +23,12 @@ CampaignInfluencer = Table(
     Column("influencer_id", ForeignKey("influencers.id")),
 )
 
+
 class Campaign(Base):
     __tablename__ = "campaigns"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, unique=True)
     description = Column(String)
     date_from = Column(DateTime)
     date_to = Column(DateTime)
@@ -38,11 +39,12 @@ class Campaign(Base):
         "Influencer", secondary=CampaignInfluencer, back_populates="campaigns"
     )
 
+
 class Influencer(Base):
     __tablename__ = "influencers"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, unique=True)
     note = Column(String)
     date_added = Column(DateTime)
     user_id = Column(Integer, ForeignKey("users.id"))
@@ -51,16 +53,19 @@ class Influencer(Base):
         "Campaign", secondary=CampaignInfluencer, back_populates="influencers"
     )
     posts = relationship("Post", back_populates="influencer")
-    
+
+
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
-    url = Column(String, index=True)
-    generated_redirect = Column(String)
+    url = Column(String, index=True, unique=True)
+    generated_redirect = Column(String,  unique=True)
     date_added = Column(DateTime)
     influencer_id = Column(Integer, ForeignKey("influencers.id"))
-    influencer = relationship("Influencer", uselist=False, back_populates="posts")
+    influencer = relationship(
+        "Influencer", uselist=False, back_populates="posts")
     post_data = relationship("PostData", uselist=False, back_populates="post")
+
 
 class PostData(Base):
     __tablename__ = "postdata"
@@ -73,4 +78,3 @@ class PostData(Base):
     num_dislikes = Column(Integer)
     post_id = Column(Integer, ForeignKey("posts.id"))
     post = relationship("Post", uselist=False, back_populates="post_data")
-

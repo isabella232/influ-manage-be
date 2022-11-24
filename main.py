@@ -7,7 +7,7 @@ from dao.user_dao import UserDao
 from schemas.user_schema import UserCreateSchema, UserSchema
 from schemas.campaign_schema import CampaignSchema, CampaignCreateSchema
 from schemas.influencer_schema import InfluencerSchema, InfluencerCreateSchema
-from models import Campaign, Influencer
+from models import Campaign, Influencer, CampaignInfluencer
 from datetime import datetime
 from database import SessionLocal, engine, Base
 Base.metadata.create_all(bind=engine)
@@ -86,15 +86,19 @@ def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends
     return campaign
 
 
-@app.get("/campaigns/{user_id}", response_model=list[CampaignSchema])
+@app.get("/campaigns/uid/{user_id}", response_model=list[CampaignSchema])
 def get_campaigns_by_user(user_id: int, db: Session = Depends(get_db)):
     res = db.query(Campaign).filter(Campaign.user_id == user_id).all()
+    if not res:
+        raise Exception("campaign not found")
     return res
 
 
-@app.get("/campaigns/{campaign_id}", response_model=CampaignSchema)
+@app.get("/campaigns/campaign/{campaign_id}", response_model=CampaignSchema)
 def get_campaign_by_id(campaign_id: int, db: Session = Depends(get_db)):
     res = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    if not res:
+        raise Exception("campaign not found")
     return res
 
 
@@ -116,15 +120,30 @@ def remove_campaign(campaign_id: int, db: Session = Depends(get_db)):
 # ******************************
 
 
-@app.get("/influencers/{user_id}", response_model=list[InfluencerSchema])
+@app.get("/influencers/uid/{user_id}", response_model=list[InfluencerSchema])
 def get_influencers_by_user(user_id: int, db: Session = Depends(get_db)):
     res = db.query(Influencer).filter(Influencer.user_id == user_id).all()
     return res
 
-@app.get("/influencers/{influencer_id}", response_model=InfluencerSchema)
+
+@app.get("/influencers/id/{influencer_id}", response_model=InfluencerSchema)
 def get_influencer_by_id(influencer_id: int, db: Session = Depends(get_db)):
     res = db.query(Influencer).filter(Influencer.id == influencer_id).first()
+    if not res:
+        raise Exception("influencer not found")
     return res
+
+
+@app.get("/influencers/campaign/{campaign_id}", response_model=list[InfluencerSchema])
+def get_influencers_by_campaign(campaign_id: int, db: Session = Depends(get_db)):
+    campaign: Campaign = db.query(Campaign).filter(
+        Campaign.id == campaign_id).first()
+    if not campaign:
+        raise Exception("campaign not found")
+    influencer_ids = [influ.id for influ in campaign.influencers]
+    result = db.query(Influencer).filter(Influencer.id.in_(influencer_ids)).all()
+    return result
+
 
 @app.post("/influencers/", response_model=InfluencerSchema)
 def create_influencer(influencer_schema: InfluencerCreateSchema, db: Session = Depends(get_db)):
@@ -135,6 +154,25 @@ def create_influencer(influencer_schema: InfluencerCreateSchema, db: Session = D
     db.commit()
     db.refresh(influencer)
     return influencer
+
+
+@app.delete("/influencers/{influencer_id}")
+def remove_influencer(influencer_id: int, db: Session = Depends(get_db)):
+    db.query(Influencer).filter(Influencer.id == influencer_id).delete()
+    db.commit()
+    db.commit()
+    return True
+
+# ******************************
+# ******************************
+# ******************************
+# ******************************
+# ******************************
+# ---INFLUENCERS-CAMPAIGNS------
+# ******************************
+# ******************************
+# ******************************
+# ******************************
 
 
 @app.post("/campaigns/{campaign_id}/add-influencer")
@@ -151,16 +189,23 @@ def add_influencer_to_campaign(campaign_id: int, influencer_id: int, db: Session
     db.refresh(influencer)
     return campaign
 
-#TODO: remove influencer if no campaign
-#TODO: remove influencer from campaign
-#TODO: add post (campaign, influencer) + postdata
-#TODO: remove post (campaign, influencer) + postdata
-#TODO: add subscription
-#TODO: update ___
 
+@app.delete("/campaigns/{campaign_id}/remove-influencer")
+def remove_influencer_from_campaign(campaign_id: int, influencer_id: int, db: Session = Depends(get_db)):
+    campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    if not campaign:
+        raise Exception("campaign not found")
+    new_influencers = [influ for influ in campaign.influencers if influ.id != influencer_id]
+    campaign.influencers = new_influencers
+    db.add(campaign)
+    db.commit()
+    return True
 
+# TODO: add post (campaign, influencer) + postdata
+# TODO: remove post (campaign, influencer) + postdata
+# TODO: add subscription
 
-
+# TODO: update ___
 
 
 if __name__ == "__main__":
