@@ -9,8 +9,7 @@ class CampaignBaseSchema(BaseModel):
     date_to: datetime.datetime
 
 class CampaignCreateSchema(CampaignBaseSchema):
-    user_id: int
-
+    pass
 class CampaignSchema(CampaignBaseSchema):
     id: int
     date_created: datetime.datetime

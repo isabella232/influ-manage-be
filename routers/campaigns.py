@@ -5,13 +5,14 @@ from schemas.campaign_schema import CampaignSchema, CampaignCreateSchema
 from models import Campaign, Influencer
 from datetime import datetime
 from database import get_db
+from auth import oauth2_scheme, get_current_user
 
 
 router = APIRouter()
 
 
 @router.post("/campaigns/", response_model=CampaignSchema)
-def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends(get_db)):
+def create_campaign(campaign_schema: CampaignCreateSchema, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
     date_to = datetime.now()
     date_from = datetime.now()
     date_created = datetime.now()
@@ -23,16 +24,14 @@ def create_campaign(campaign_schema: CampaignCreateSchema, db: Session = Depends
     return campaign
 
 
-@router.get("/campaigns/uid/{user_id}", response_model=list[CampaignSchema])
-def get_campaigns_by_user(user_id: int, db: Session = Depends(get_db)):
-    res = db.query(Campaign).filter(Campaign.user_id == user_id).all()
-    if not res:
-        raise Exception("campaign not found")
+@router.get("/campaigns/", response_model=list[CampaignSchema])
+def get_campaigns_by_user(user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
+    res = db.query(Campaign).filter(Campaign.user_id == user.id).all()
     return res
 
 
-@router.get("/campaigns/campaign/{campaign_id}", response_model=CampaignSchema)
-def get_campaign_by_id(campaign_id: int, db: Session = Depends(get_db)):
+@router.get("/campaigns/{campaign_id}", response_model=CampaignSchema)
+def get_campaign_by_id(campaign_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
     res = db.query(Campaign).filter(Campaign.id == campaign_id).first()
     if not res:
         raise Exception("campaign not found")
@@ -40,14 +39,14 @@ def get_campaign_by_id(campaign_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/campaigns/{campaign_id}")
-def remove_campaign(campaign_id: int, db: Session = Depends(get_db)):
+def remove_campaign(campaign_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> bool:
     db.query(Campaign).filter(Campaign.id == campaign_id).delete()
     db.commit()
     return True
 
 
 @router.post("/campaigns/{campaign_id}/add-influencer")
-def add_influencer_to_campaign(campaign_id: int, influencer_id: int, db: Session = Depends(get_db)):
+def add_influencer_to_campaign(campaign_id: int, influencer_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
     campaign: Campaign = db.query(Campaign).filter(
         Campaign.id == campaign_id).first()
     influencer: Influencer = db.query(Influencer).filter(
@@ -62,7 +61,7 @@ def add_influencer_to_campaign(campaign_id: int, influencer_id: int, db: Session
 
 
 @router.delete("/campaigns/{campaign_id}/remove-influencer")
-def remove_influencer_from_campaign(campaign_id: int, influencer_id: int, db: Session = Depends(get_db)):
+def remove_influencer_from_campaign(campaign_id: int, influencer_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> bool:
     campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
     if not campaign:
         raise Exception("campaign not found")

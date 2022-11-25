@@ -1,6 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, Table, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Table, ForeignKey, Enum
 from sqlalchemy.orm import relationship
-
+from enums.user_levels import UserLevels
 from database import Base
 
 
@@ -11,6 +11,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    access_level = Column(Enum(UserLevels), default=UserLevels.L1)
     campaigns = relationship("Campaign", back_populates="user")
     influencers = relationship("Influencer", back_populates="user")
 
