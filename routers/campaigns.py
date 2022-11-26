@@ -4,8 +4,7 @@ from sqlalchemy.orm import Session
 from schemas.campaign_schema import CampaignSchema, CampaignCreateSchema
 from models import Campaign, Influencer
 from datetime import datetime
-from database import get_db
-from auth import oauth2_scheme, get_current_user
+from deps import get_db,get_current_user
 
 
 router = APIRouter()

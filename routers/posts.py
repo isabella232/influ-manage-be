@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from dao.user_dao import UserDao
 from schemas.user_schema import UserCreateSchema, UserSchema
-from database import get_db
+from deps import get_db
 
 
 router = APIRouter()

@@ -1,11 +1,10 @@
 from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
-from database import get_db
+from deps import get_db, get_current_user
 from models import Influencer, Campaign
 from schemas.influencer_schema import InfluencerSchema, InfluencerCreateSchema
 from datetime import datetime
-from auth import get_current_user
 
 router = APIRouter()
 

@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 
 from dao.user_dao import UserDao
 from schemas.user_schema import UserCreateSchema, UserSchema
-from database import get_db
+from deps import get_db, get_current_user
 from models import User
-from auth import get_current_user, decode_token, hash_password
+from auth import hash_password
 
 router = APIRouter()
 
