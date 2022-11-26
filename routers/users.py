@@ -8,7 +8,6 @@ from database import get_db
 from models import User
 from auth import get_current_user, decode_token, hash_password
 
-
 router = APIRouter()
 
 
@@ -43,7 +42,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user:
         raise HTTPException(
             status_code=400, detail="Incorrect username or password")
-    hashed_password = hash_password(form_data.password)
+    hashed_password = hash_password(form_data.password, user.salt)
     if not hashed_password == user.hashed_password:
         raise HTTPException(
             status_code=400, detail="Incorrect username or password")

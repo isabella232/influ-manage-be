@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models import User
 from schemas.user_schema import UserCreateSchema
 from auth import hash_password
+import os
 
 
 class UserDao:
@@ -16,8 +17,9 @@ class UserDao:
         return db.query(User).offset(skip).limit(limit).all()
 
     def create_user(self, db: Session, user_schema: UserCreateSchema) -> User:
+        salt = os.urandom(32)
         db_user = User(
-            email=user_schema.email, hashed_password=hash_password(user_schema.password))
+            email=user_schema.email, hashed_password=hash_password(user_schema.password, salt), salt=salt)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)

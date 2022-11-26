@@ -11,8 +11,7 @@ app.include_router(campaigns.router)
 app.include_router(influencers.router)
 app.include_router(posts.router)
 
-# TODO: authentication
-# TODO: update ___
+# TODO: create update methods for everything
 
 
 if __name__ == "__main__":

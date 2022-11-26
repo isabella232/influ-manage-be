@@ -10,6 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    salt = Column(String)
     is_active = Column(Boolean, default=True)
     access_level = Column(Enum(UserLevels), default=UserLevels.L1)
     campaigns = relationship("Campaign", back_populates="user")
