@@ -8,7 +8,10 @@ from enums.user_levels import UserLevels
 #TODO: REFACTOR auth.py
 
 def decode_token(token) -> User:
-    # TODO: AUTHENTICATION --- implement token decoding, this is mock
+    # TODO: IMPLEMENT ACCORDING TO https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
+    #
+    # OLD:
+    # AUTHENTICATION --- implement token decoding, this is mock 
     # token should be created in login phase and temporary stored so that it can be decoded here later
     # token will be stored in dictionary: {"user": [token, timestamp]}
     # if timestamp is old, generate new token, else decode, if not there - not authorized - must be generated when logging in
