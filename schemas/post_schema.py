@@ -1,16 +1,27 @@
 from typing import Union
 
 from pydantic import BaseModel
-from schemas.postdata_model import PostData
+from database import Base
+from schemas.postdata_schema import PostDataSchema
 
 
-class PostSchema(BaseModel):
-    id: int
+class BasePostSchema(BaseModel):
     url: str
+
+
+class PostCreateSchema(BasePostSchema):
+    influencer_id: int
+    campaign_id: int
+
+
+
+class PostSchema(BasePostSchema):
+    id: int
+    post_data: PostDataSchema
     generated_redirect: str
     date_added: str
     influencer_id: int
-    post_data: PostData
+    campaign_id: int
+
     class Config:
         orm_mode = True
- 

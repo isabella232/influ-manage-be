@@ -1,7 +1,6 @@
 from fastapi.security import OAuth2PasswordBearer
 from models import User
 from fastapi import Depends
-from auth import decode_token
 from enums.user_levels import UserLevels
 from database import SessionLocal
 
@@ -10,6 +9,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+    from auth import decode_token
     user = decode_token(token)
     return user
 

@@ -19,23 +19,6 @@ def create_user(user_schema: UserCreateSchema, db: Session = Depends(get_db)) ->
         raise HTTPException(status_code=400, detail="Email already registered")
     return user_dao.create_user(db=db, user_schema=user_schema)
 
-
-@router.get("/users/", response_model=list[UserSchema])
-def get_users(skip: int = 0, limit: int = 100, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> list[User]:
-    user_dao = UserDao()
-    users = user_dao.get_users(db, skip=skip, limit=limit)
-    return users
-
-
-@router.get("/users/{user_id}", response_model=UserSchema)
-def get_user(user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> User:
-    user_dao = UserDao()
-    db_user = user_dao.get_user(db, user_id=user.id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == form_data.username).first()

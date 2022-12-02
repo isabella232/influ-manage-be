@@ -6,7 +6,6 @@ import datetime
 
 
 class InfluencerBaseSchema(BaseModel):
-    user_id: int
     name: str
     note: str
 
@@ -19,6 +18,8 @@ class InfluencerSchema(InfluencerBaseSchema):
     id: int
     date_added: datetime.datetime
     campaigns: list[CampaignSchema]
+    user_id: int
+
 
     class Config:
         orm_mode = True

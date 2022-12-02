@@ -2,7 +2,18 @@ from typing import Union
 
 from pydantic import BaseModel
 
-class PostDataSchema(BaseModel):
+from database import Base
+
+
+class BasePostDataSchema(BaseModel):
+    pass
+
+
+class PostDataCreateSchema(BasePostDataSchema):
+    pass
+
+
+class PostDataSchema(BasePostDataSchema):
     id: int
     date_refreshed: str
     num_views: int
@@ -11,5 +22,3 @@ class PostDataSchema(BaseModel):
     num_dislikes: int
     num_comments: int
     post_id: int
-
-
