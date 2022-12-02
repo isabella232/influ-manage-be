@@ -11,6 +11,18 @@ from deps import get_db, get_current_user
 router = APIRouter()
 
 
+@router.put("/campaigns/{campaign_id}", response_model=CampaignSchema)
+def update_campaign(campaign_id: int, campaign_schema: CampaignCreateSchema, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
+    campaign: Campaign = db.query(Campaign).filter(Campaign.id == campaign_id, Campaign.user_id == user.id).first()
+    campaign.date_from = campaign_schema.date_from
+    campaign.date_to = campaign_schema.date_to
+    campaign.description = campaign_schema.description
+    campaign.name = campaign_schema.name
+    db.add(campaign)
+    db.commit()
+    db.refresh(campaign)
+    return campaign
+
 @router.post("/campaigns/", response_model=CampaignSchema)
 def create_campaign(campaign_schema: CampaignCreateSchema, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Campaign:
     campaign = Campaign(name=campaign_schema.name, user_id=user.id,

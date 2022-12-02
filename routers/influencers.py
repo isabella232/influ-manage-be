@@ -1,3 +1,4 @@
+from cmath import inf
 from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
@@ -44,6 +45,16 @@ def create_influencer(influencer_schema: InfluencerCreateSchema, user: str = Dep
     added = datetime.now()
     influencer = Influencer(name=influencer_schema.name,
                             note=influencer_schema.note, date_added=added, user_id=user.id)
+    db.add(influencer)
+    db.commit()
+    db.refresh(influencer)
+    return influencer
+
+@router.put("/influencers/{influencer_id}", response_model=InfluencerSchema)
+def update_influencer(influencer_id: int, influencer_schema: InfluencerCreateSchema, user: str = Depends(get_current_user), db: Session = Depends(get_db)) -> Influencer:
+    influencer: Influencer = db.query(Influencer).filter(Influencer.id == influencer_id, Influencer.user_id == user.id).first()
+    influencer.name = influencer_schema.name
+    influencer.note = influencer_schema.note
     db.add(influencer)
     db.commit()
     db.refresh(influencer)
