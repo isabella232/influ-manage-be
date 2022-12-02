@@ -7,6 +7,7 @@ from schemas.user_schema import UserCreateSchema, UserSchema
 from deps import get_db, get_current_user
 from models import User
 from auth import hash_password
+from schemas.token_schema import TokenSchema
 
 router = APIRouter()
 
@@ -19,7 +20,8 @@ def create_user(user_schema: UserCreateSchema, db: Session = Depends(get_db)) ->
         raise HTTPException(status_code=400, detail="Email already registered")
     return user_dao.create_user(db=db, user_schema=user_schema)
 
-@router.post("/token")
+
+@router.post("/token", response_model=TokenSchema)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == form_data.username).first()
     if not user:
