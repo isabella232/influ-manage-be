@@ -1,16 +1,34 @@
 from fastapi.security import OAuth2PasswordBearer
 from models import User
-from fastapi import Depends
+from fastapi import Depends, FastAPI, HTTPException, status
 from enums.user_levels import UserLevels
-from database import SessionLocal
+from jose import JWTError, jwt
+from dao.user_dao import UserDao
+from schemas.token_schema import TokenDataSchema
+from commons.constants import Constants
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    from auth import decode_token
-    user = decode_token(token)
+    user_dao = UserDao()
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, Constants.SECRET_KEY, algorithms=[Constants.ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = TokenDataSchema(username=username)
+    except JWTError:
+        raise credentials_exception
+    user = user_dao.get_user_by_email(token_data.username)
+    if user is None:
+        raise credentials_exception
     return user
 
 
@@ -22,11 +40,3 @@ def get_current_user_with_level(minimum_level: UserLevels, active_state: bool = 
         return current_user
     else:
         raise Exception("Not high enough permissions")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
