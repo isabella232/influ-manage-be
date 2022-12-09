@@ -10,13 +10,13 @@ db = Database()
 def redirect_generated(
     generated_url: str
 ) -> None:
-    with db.session() as db:
-        post: Post = db.query(Post).filter(Post.generated_redirect == generated_url).first()
+    with db.session() as session:
+        post: Post = session.query(Post).filter(Post.generated_redirect == generated_url).first()
         if post:
-            post_data: PostData = db.query(PostData).filter(PostData.post_id == post.id).first()
+            post_data: PostData = session.query(PostData).filter(PostData.post_id == post.id).first()
             post_data.num_clicks += 1
-            db.add(post_data)
-            db.commit()
+            session.add(post_data)
+            session.commit()
             return post.url
         else:
             return "/badredirect"

@@ -35,7 +35,8 @@ CampaignInfluencer = Table(
     Column("influencer_id", ForeignKey("influencers.id")),
 )
 
-#TODO: MAKE unique to be unique to user only
+# TODO: MAKE unique to be unique to user only
+
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -68,7 +69,9 @@ class Influencer(Base):
     )
     posts = relationship("Post", back_populates="influencer")
 
-#TODO: make post to have 1to1 with postdata
+# TODO: make post to have 1to1 with postdata
+
+
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
@@ -79,7 +82,7 @@ class Post(Base):
     campaign_id = Column(Integer, ForeignKey("campaigns.id"))
     influencer = relationship("Influencer", uselist=False, back_populates="posts")
     campaign = relationship("Campaign", uselist=False, back_populates="posts")
-    post_data = relationship("PostData", uselist=False, back_populates="post")
+    post_data = relationship("PostData", uselist=False, back_populates="post", cascade="all,delete")
 
 
 class PostData(Base):
