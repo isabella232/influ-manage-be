@@ -11,7 +11,9 @@ class InfluencerDao:
             res = db.query(Influencer).filter(Influencer.user_id == user_id).all()
             return res
 
-    def get_influencers_by_campaign(self, user_id: int, campaign_id: int) -> list[Influencer]:
+    def get_influencers_by_campaign(
+        self, user_id: int, campaign_id: int
+    ) -> list[Influencer]:
         with SessionLocal() as db:
             campaign: Campaign = (
                 db.query(Campaign)

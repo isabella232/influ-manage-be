@@ -5,6 +5,7 @@ from models import Campaign
 from fastapi import HTTPException
 from datetime import datetime
 
+
 class CampaignDao:
     def create_campaign(
         self, campaign_schema: CampaignCreateSchema, user_id: int
