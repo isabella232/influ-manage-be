@@ -37,6 +37,5 @@ def create_post(
 def remove_post(
     post_id: int, user: User = Depends(get_current_user)
 ) -> GeneralBoolResponseSchema:
-    # TODO: implement remove post
     post_dao.remove_post(post_id, user.id)
     return GeneralBoolResponseSchema(success=True)
