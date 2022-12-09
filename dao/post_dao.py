@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Callable, Iterator
 from contextlib import AbstractContextManager
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
 
 class PostDao:
     def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]]):
@@ -20,12 +21,12 @@ class PostDao:
             if not campaign:
                 raise HTTPException(status_code=404, detail="Campaign not found")
 
-            posts = db.query(Post).filter(Post.campaign_id == campaign.id).all()
+            posts = db.query(Post).options(joinedload(Post.post_data)).filter(Post.campaign_id == campaign.id).all()
             return posts
 
     def get_post(self, post_id: int, user_id: int) -> Post:
         with self.__session_factory() as db:
-            post: Post = db.query(Post).filter(Post.id == user_id).first()
+            post: Post = db.query(Post).options(joinedload(Post.post_data)).filter(Post.id == user_id).first()
             if post.campaign.user_id == user_id:
                 return post
             else:
