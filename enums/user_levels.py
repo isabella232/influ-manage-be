@@ -8,7 +8,7 @@ class UserLevels(Enum):
 
     def __gt__(self, user_level2: "UserLevels"):
         return self.value > user_level2.value
-        
+
     def __ge__(self, user_level2: "UserLevels"):
         return self.value >= user_level2.value
 

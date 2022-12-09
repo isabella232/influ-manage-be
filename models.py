@@ -1,4 +1,13 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, Table, ForeignKey, Enum
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Table,
+    ForeignKey,
+    Enum,
+)
 from sqlalchemy.orm import relationship
 from enums.user_levels import UserLevels
 from database import Base
@@ -62,12 +71,11 @@ class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
     url = Column(String, index=True, unique=True)
-    generated_redirect = Column(String,  unique=True)
+    generated_redirect = Column(String, unique=True)
     date_added = Column(DateTime)
     influencer_id = Column(Integer, ForeignKey("influencers.id"))
     campaign_id = Column(Integer, ForeignKey("campaigns.id"))
-    influencer = relationship(
-        "Influencer", uselist=False, back_populates="posts")
+    influencer = relationship("Influencer", uselist=False, back_populates="posts")
     campaign = relationship("Campaign", uselist=False, back_populates="posts")
     post_data = relationship("PostData", uselist=False, back_populates="post")
 

@@ -1,6 +1,6 @@
 from fastapi.security import OAuth2PasswordBearer
 from models import User
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from enums.user_levels import UserLevels
 from jose import JWTError, jwt
 from dao.user_dao import UserDao
@@ -19,7 +19,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, Constants.SECRET_KEY, algorithms=[Constants.ALGORITHM])
+        payload = jwt.decode(
+            token, Constants.SECRET_KEY, algorithms=[Constants.ALGORITHM]
+        )
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
@@ -32,7 +34,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     return user
 
 
-def get_current_user_with_level(minimum_level: UserLevels, active_state: bool = True, current_user: User = Depends(get_current_user)) -> User:
+def get_current_user_with_level(
+    minimum_level: UserLevels,
+    active_state: bool = True,
+    current_user: User = Depends(get_current_user),
+) -> User:
     if current_user.is_active is not active_state:
         raise Exception("User not active")
 

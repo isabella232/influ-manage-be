@@ -1,5 +1,3 @@
-from typing import Union
-
 from pydantic import BaseModel
 from schemas.campaign_schema import CampaignSchema
 import datetime
@@ -19,7 +17,6 @@ class InfluencerSchema(InfluencerBaseSchema):
     date_added: datetime.datetime
     campaigns: list[CampaignSchema]
     user_id: int
-
 
     class Config:
         orm_mode = True

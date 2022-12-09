@@ -1,5 +1,3 @@
-from typing import Union
-import datetime
 from pydantic import BaseModel
 
 

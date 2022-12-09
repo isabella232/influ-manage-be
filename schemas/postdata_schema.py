@@ -1,8 +1,4 @@
-from typing import Union
-
 from pydantic import BaseModel
-
-from database import Base
 
 
 class BasePostDataSchema(BaseModel):

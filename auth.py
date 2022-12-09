@@ -1,12 +1,10 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from commons.constants import Constants
-from jose import JWTError, jwt
+from jose import jwt
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# TODO: REFACTOR auth.py
 
 
 class AuthUtils:
@@ -35,5 +33,7 @@ class AuthUtils:
         else:
             expire = datetime.utcnow() + timedelta(minutes=15)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, Constants.SECRET_KEY, algorithm=Constants.ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode, Constants.SECRET_KEY, algorithm=Constants.ALGORITHM
+        )
         return encoded_jwt

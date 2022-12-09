@@ -1,7 +1,4 @@
-from typing import Union
-
 from pydantic import BaseModel
-from database import Base
 from schemas.postdata_schema import PostDataSchema
 
 
@@ -12,7 +9,6 @@ class BasePostSchema(BaseModel):
 class PostCreateSchema(BasePostSchema):
     influencer_id: int
     campaign_id: int
-
 
 
 class PostSchema(BasePostSchema):
