@@ -11,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from enums.user_levels import UserLevels
 from database import Base
+from datetime import datetime
 
 
 class User(Base):
@@ -34,6 +35,7 @@ CampaignInfluencer = Table(
     Column("influencer_id", ForeignKey("influencers.id")),
 )
 
+#TODO: MAKE unique to be unique to user only
 
 class Campaign(Base):
     __tablename__ = "campaigns"
@@ -47,7 +49,7 @@ class Campaign(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="campaigns", uselist=False)
     influencers = relationship(
-        "Influencer", secondary=CampaignInfluencer, back_populates="campaigns"
+        "Influencer", secondary=CampaignInfluencer, back_populates="campaigns", lazy='subquery'
     )
     posts = relationship("Post", back_populates="campaign", uselist=True)
 
@@ -62,11 +64,11 @@ class Influencer(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="influencers", uselist=False)
     campaigns = relationship(
-        "Campaign", secondary=CampaignInfluencer, back_populates="influencers"
+        "Campaign", secondary=CampaignInfluencer, back_populates="influencers", lazy='subquery'
     )
     posts = relationship("Post", back_populates="influencer")
 
-
+#TODO: make post to have 1to1 with postdata
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
@@ -83,7 +85,7 @@ class Post(Base):
 class PostData(Base):
     __tablename__ = "postdata"
     id = Column(Integer, primary_key=True, index=True)
-    date_refreshed = Column(DateTime)
+    date_refreshed = Column(DateTime, default=datetime.now())
     num_views = Column(Integer, default=0)
     num_clicks = Column(Integer, default=0)
     num_likes = Column(Integer, default=0)

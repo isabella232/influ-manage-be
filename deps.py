@@ -6,13 +6,14 @@ from jose import JWTError, jwt
 from dao.user_dao import UserDao
 from schemas.token_schema import TokenDataSchema
 from commons.constants import Constants
-
+from database import Database
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+db = Database()
+user_dao = UserDao(db.session)
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    user_dao = UserDao()
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

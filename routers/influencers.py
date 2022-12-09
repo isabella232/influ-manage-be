@@ -5,9 +5,11 @@ from models import Influencer
 from schemas.influencer_schema import InfluencerSchema, InfluencerCreateSchema
 from schemas.general_response_schemas import GeneralBoolResponseSchema
 from dao.influencer_dao import InfluencerDao
+from database import Database
 
 router = APIRouter()
-influencer_dao = InfluencerDao()
+db = Database()
+influencer_dao = InfluencerDao(db.session)
 
 
 @router.get("/influencers/", response_model=list[InfluencerSchema])

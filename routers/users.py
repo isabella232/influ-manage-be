@@ -8,10 +8,11 @@ from auth import AuthUtils
 from schemas.token_schema import TokenSchema
 from datetime import timedelta
 from commons.constants import Constants
-
+from database import Database
 router = APIRouter()
 
-user_dao = UserDao()
+db = Database()
+user_dao = UserDao(db.session)
 
 
 @router.post("/users/", response_model=UserSchema)

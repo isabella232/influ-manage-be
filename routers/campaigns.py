@@ -5,10 +5,12 @@ from schemas.general_response_schemas import GeneralBoolResponseSchema
 from models import Campaign, User
 from deps import get_current_user
 from dao.campaign_dao import CampaignDao
+from database import Database
 
 
 router = APIRouter()
-campaign_dao = CampaignDao()
+db = Database()
+campaign_dao = CampaignDao(db.session)
 
 
 @router.put("/campaigns/{campaign_id}", response_model=CampaignSchema)

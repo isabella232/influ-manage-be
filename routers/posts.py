@@ -4,13 +4,14 @@ from schemas.post_schema import PostCreateSchema, PostSchema
 from deps import get_current_user
 from models import Post, User
 from schemas.general_response_schemas import GeneralBoolResponseSchema
-
+from database import Database
 
 router = APIRouter()
-post_dao = PostDao()
+db = Database()
+post_dao = PostDao(db.session)
 
 
-@router.get("/posts/{campaign_id}", response_model=list[PostSchema])
+@router.get("/posts/campaign/{campaign_id}", response_model=list[PostSchema])
 def get_posts_by_campaign(
     campaign_id: int, user: User = Depends(get_current_user)
 ) -> list[Post]:
@@ -18,7 +19,7 @@ def get_posts_by_campaign(
     return res
 
 
-@router.get("/posts/{post_id}", response_model=PostSchema)
+@router.get("/posts/id/{post_id}", response_model=PostSchema)
 def get_post_by_id(post_id: int, user: User = Depends(get_current_user)) -> Post:
     res = post_dao.get_post(post_id, user.id)
     return res

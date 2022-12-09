@@ -1,16 +1,22 @@
 from models import Influencer
-from database import SessionLocal
+from database import Database
 from schemas.campaign_schema import CampaignCreateSchema
 from models import Campaign
 from fastapi import HTTPException
 from datetime import datetime
+from typing import Callable, Iterator
+from contextlib import AbstractContextManager
+from sqlalchemy.orm import Session
 
 
 class CampaignDao:
+    def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]]):
+        self.__session_factory = session_factory
+
     def create_campaign(
         self, campaign_schema: CampaignCreateSchema, user_id: int
     ) -> Campaign:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             campaign = Campaign(
                 name=campaign_schema.name,
                 user_id=user_id,
@@ -27,7 +33,7 @@ class CampaignDao:
     def update_campaign(
         self, campaign_id: int, updated_schema: CampaignCreateSchema, user_id: int
     ) -> Campaign:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             campaign: Campaign = (
                 db.query(Campaign)
                 .filter(Campaign.id == campaign_id, Campaign.user_id == user_id)
@@ -43,7 +49,7 @@ class CampaignDao:
             return campaign
 
     def get_campaign(self, campaign_id: int, user_id: int) -> Campaign:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             campaign = (
                 db.query(Campaign)
                 .filter(Campaign.id == campaign_id, Campaign.user_id == user_id)
@@ -54,22 +60,22 @@ class CampaignDao:
             return campaign
 
     def get_campaigns(self, user_id: int) -> list[Campaign]:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             res = db.query(Campaign).filter(Campaign.user_id == user_id).all()
             return res
 
     def remove_campaign(self, campaign_id: int, user_id: int) -> bool:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             db.query(Campaign).filter(
                 Campaign.id == campaign_id, Campaign.user_id == user_id
             ).delete()
-            db.commit()
+            # db.commit()
             return True
 
     def add_influencer(
         self, campaign_id: int, influencer_id: int, user_id: int
     ) -> bool:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             campaign: Campaign = (
                 db.query(Campaign)
                 .filter(Campaign.id == campaign_id, Campaign.user_id == user_id)
@@ -95,7 +101,7 @@ class CampaignDao:
     def remove_influencer(
         self, campaign_id: int, influencer_id: int, user_id: int
     ) -> bool:
-        with SessionLocal() as db:
+        with self.__session_factory() as db:
             campaign = (
                 db.query(Campaign)
                 .filter(Campaign.id == campaign_id, Campaign.user_id == user_id)
@@ -109,4 +115,5 @@ class CampaignDao:
             campaign.influencers = new_influencers
             db.add(campaign)
             db.commit()
+            db.refresh(campaign)
             return True
