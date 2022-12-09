@@ -3,3 +3,6 @@ sqlalchemy
 python-jose
 passlib
 bcrypt
+black
+flake8
+pre-commit
