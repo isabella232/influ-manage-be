@@ -11,7 +11,7 @@ db = Database()
 post_dao = PostDao(db.session)
 
 
-@router.get("/posts/campaign/{campaign_id}", response_model=list[PostSchema])
+@router.get("/api/posts/campaign/{campaign_id}", response_model=list[PostSchema])
 def get_posts_by_campaign(
     campaign_id: int, user: User = Depends(get_current_user)
 ) -> list[Post]:
@@ -19,13 +19,13 @@ def get_posts_by_campaign(
     return res
 
 
-@router.get("/posts/id/{post_id}", response_model=PostSchema)
+@router.get("/api/posts/id/{post_id}", response_model=PostSchema)
 def get_post_by_id(post_id: int, user: User = Depends(get_current_user)) -> Post:
     res = post_dao.get_post(post_id, user.id)
     return res
 
 
-@router.post("/posts/", response_model=PostSchema)
+@router.post("/api/posts/", response_model=PostSchema)
 def create_post(
     post_create_schema: PostCreateSchema, user: User = Depends(get_current_user)
 ) -> Post:
@@ -33,7 +33,7 @@ def create_post(
     return res
 
 
-@router.delete("/posts/{post_id}", response_model=GeneralBoolResponseSchema)
+@router.delete("/api/posts/{post_id}", response_model=GeneralBoolResponseSchema)
 def remove_post(
     post_id: int, user: User = Depends(get_current_user)
 ) -> GeneralBoolResponseSchema:

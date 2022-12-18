@@ -8,7 +8,7 @@ from schemas.token_schema import TokenDataSchema
 from commons.constants import Constants
 from database import Database
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 db = Database()
 user_dao = UserDao(db.session)
 

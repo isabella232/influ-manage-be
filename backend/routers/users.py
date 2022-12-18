@@ -15,7 +15,7 @@ db = Database()
 user_dao = UserDao(db.session)
 
 
-@router.post("/users/", response_model=UserSchema)
+@router.post("/api/users/", response_model=UserSchema)
 def create_user(user_schema: UserCreateSchema) -> User:
     db_user = user_dao.get_user_by_email(email=user_schema.email)
     if db_user:
@@ -23,7 +23,7 @@ def create_user(user_schema: UserCreateSchema) -> User:
     return user_dao.create_user(user_schema=user_schema)
 
 
-@router.post("/token", response_model=TokenSchema)
+@router.post("/api/token", response_model=TokenSchema)
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = AuthUtils.authenticate_user(user_dao, form_data.username, form_data.password)
     if not user:

@@ -13,7 +13,7 @@ db = Database()
 campaign_dao = CampaignDao(db.session)
 
 
-@router.put("/campaigns/{campaign_id}", response_model=CampaignSchema)
+@router.put("/api/campaigns/{campaign_id}", response_model=CampaignSchema)
 def update_campaign(
     campaign_id: int,
     campaign_schema: CampaignCreateSchema,
@@ -23,7 +23,7 @@ def update_campaign(
     return updated
 
 
-@router.post("/campaigns/", response_model=CampaignSchema)
+@router.post("/api/campaigns/", response_model=CampaignSchema)
 def create_campaign(
     campaign_schema: CampaignCreateSchema, user: User = Depends(get_current_user)
 ) -> Campaign:
@@ -31,13 +31,13 @@ def create_campaign(
     return campaign
 
 
-@router.get("/campaigns/", response_model=list[CampaignSchema])
+@router.get("/api/campaigns/", response_model=list[CampaignSchema])
 def get_campaigns_by_user(user: str = Depends(get_current_user)) -> Campaign:
     campaigns = campaign_dao.get_campaigns(user.id)
     return campaigns
 
 
-@router.get("/campaigns/{campaign_id}", response_model=CampaignSchema)
+@router.get("/api/campaigns/{campaign_id}", response_model=CampaignSchema)
 def get_campaign_by_id(
     campaign_id: int, user: User = Depends(get_current_user)
 ) -> Campaign:
@@ -45,7 +45,7 @@ def get_campaign_by_id(
     return campaign
 
 
-@router.delete("/campaigns/{campaign_id}", response_model=GeneralBoolResponseSchema)
+@router.delete("/api/campaigns/{campaign_id}", response_model=GeneralBoolResponseSchema)
 def remove_campaign(
     campaign_id: int, user: User = Depends(get_current_user)
 ) -> GeneralBoolResponseSchema:
@@ -54,7 +54,7 @@ def remove_campaign(
 
 
 @router.post(
-    "/campaigns/{campaign_id}/add-influencer", response_model=GeneralBoolResponseSchema
+    "/api/campaigns/{campaign_id}/add-influencer", response_model=GeneralBoolResponseSchema
 )
 def add_influencer_to_campaign(
     campaign_id: int, influencer_id: int, user: User = Depends(get_current_user)
@@ -64,7 +64,7 @@ def add_influencer_to_campaign(
 
 
 @router.delete(
-    "/campaigns/{campaign_id}/remove-influencer",
+    "/api/campaigns/{campaign_id}/remove-influencer",
     response_model=GeneralBoolResponseSchema,
 )
 def remove_influencer_from_campaign(
