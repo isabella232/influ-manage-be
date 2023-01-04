@@ -1,5 +1,5 @@
 # Backend for influencer managment platform
-Simple influencers marketing management tool for performance tracking and more
+API for affilate marketing platform
 
 To start backend: 
 `uvicorn main:app --reload` or `py -m uvicorn main:app --reload`
