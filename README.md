@@ -1,6 +1,8 @@
 # Backend for influencer managment platform
 API for affilate marketing platform
 
+FastAPI + sqlalchemy
+
 To start backend: 
 `uvicorn main:app --reload` or `py -m uvicorn main:app --reload`
 
