@@ -1,4 +1,4 @@
-# influencer-management-platform
+# Backend for influencer managment platform
 Simple influencers marketing management tool for performance tracking and more
 
 To start backend: 
